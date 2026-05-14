@@ -22,5 +22,4 @@ export const env: EnvironmentConfig = {
   hudlPassword: process.env.HUDL_PASSWORD,
 };
 
-export const hasHudlCredentials = (): boolean =>
-  Boolean(env.hudlEmail && env.hudlPassword);
+export const hasHudlCredentials = (): boolean => Boolean(env.hudlEmail && env.hudlPassword);
