@@ -62,4 +62,17 @@ test.describe('Hudl login', () => {
     await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
   });
+
+  test('logs in with valid credentials', async ({ page }) => {
+    await page.goto('/login');
+
+    await page.getByTestId('email-input-input').fill(env.hudlEmail);
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+
+    await page.getByTestId('password-input-input').fill(env.hudlPassword);
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+
+    await expect(page).toHaveURL(/\/home/);
+    await expect(page.getByTestId('webnav-globalnav-home').first()).toBeVisible();
+  });
 });
