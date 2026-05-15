@@ -47,4 +47,19 @@ test.describe('Hudl login', () => {
       'Your email or password is incorrect. Try again.',
     );
   });
+
+  test('opens the reset password flow from the password step', async ({ page }) => {
+    await page.goto('/login');
+
+    await page.getByTestId('email-input-input').fill(env.hudlEmail);
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+
+    await page.getByTestId('forgot-password').click();
+
+    await expect(page.getByRole('heading', { name: 'Reset Password' })).toBeVisible();
+    await expect(page.getByText("We'll send you a link to")).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
+  });
 });
