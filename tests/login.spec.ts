@@ -33,4 +33,18 @@ test.describe('Hudl login', () => {
       'Please enter your password',
     );
   });
+
+  test('shows an error when password is incorrect', async ({ page }) => {
+    await page.goto('/login');
+
+    await page.getByTestId('email-input-input').fill(env.hudlEmail);
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+
+    await page.getByTestId('password-input-input').fill('incorrect-password');
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+
+    await expect(page.getByTestId('password-input-help-text')).toContainText(
+      'Your email or password is incorrect. Try again.',
+    );
+  });
 });
