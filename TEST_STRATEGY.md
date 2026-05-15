@@ -18,6 +18,7 @@ The current suite covers:
 - Invalid email format validation
 - Empty password validation
 - Invalid password error
+- Password input masking
 - Reset password entry point from the password step
 - Successful login with valid credentials
 
