@@ -78,6 +78,8 @@ Show the latest Playwright HTML report:
 npx playwright show-report
 ```
 
+Local Playwright reports are intended for debugging only and should not be uploaded or shared, as login tests may include credentials or authenticated session data in reports or traces.
+
 The npm test scripts are defined in `package.json` and wrap the equivalent Playwright commands.
 
 ## Code quality
@@ -100,10 +102,26 @@ Apply formatting:
 npm run format
 ```
 
+## Continuous integration
+
+GitHub Actions runs linting, formatting checks and the Playwright test suite on pushes and pull requests targeting `main`.
+
+Hudl credentials are provided to CI through GitHub Actions repository secrets:
+
+```text
+HUDL_EMAIL
+HUDL_PASSWORD
+```
+
+The CI workflow uses Playwright's GitHub reporter and does not upload Playwright HTML reports, traces, screenshots or videos as artifacts.
+
 ## Project structure
 
 ```text
 hudl-login-tests/
+├── .github/
+│   └── workflows/
+│       └── playwright.yml
 ├── pages/
 │   └── login.page.ts
 ├── tests/

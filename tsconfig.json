@@ -9,11 +9,5 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "playwright.config.ts",
-    "tests/**/*.ts",
-    "pages/**/*.ts",
-    "utils/**/*.ts",
-    "test-data/**/*.ts"
-  ]
+  "include": ["playwright.config.ts", "tests/**/*.ts", "pages/**/*.ts", "utils/**/*.ts"]
 }
