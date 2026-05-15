@@ -40,6 +40,12 @@ test.describe('Hudl login', () => {
     );
   });
 
+  test('masks the password input', async () => {
+    await loginPage.submitEmail(env.hudlEmail);
+
+    await expect(loginPage.passwordInput).toHaveAttribute('type', 'password');
+  });
+
   test('opens the reset password flow from the password step', async ({ page }) => {
     await loginPage.submitEmail(env.hudlEmail);
 
