@@ -56,6 +56,16 @@ HUDL_PASSWORD=your-test-password
 
 The real `.env` file is ignored by Git and must not be committed. The committed `.env.example` file documents the required variables without exposing secrets.
 
+## CI and credential safety
+
+The GitHub Actions workflow runs linting, formatting checks and the Playwright test suite.
+
+Hudl credentials are provided through GitHub Actions repository secrets and are not committed to the repository.
+
+The CI workflow intentionally does not upload Playwright HTML reports, traces, screenshots or videos as artifacts. Login tests can expose credentials, authenticated session data or account-specific information in rich test artifacts.
+
+Locally, the HTML reporter remains available for debugging, while CI uses the GitHub reporter for pass/fail feedback and failure annotations.
+
 ## Successful login assertion
 
 The successful login test asserts:
