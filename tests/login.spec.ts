@@ -1,76 +1,61 @@
 import { expect, test } from '@playwright/test';
+import { LoginPage } from '../pages/login.page';
 import { env } from '../utils/env';
 
 test.describe('Hudl login', () => {
-  test('shows a validation message when email is empty', async ({ page }) => {
-    await page.goto('/login');
+  let loginPage: LoginPage;
 
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
-
-    await expect(page.getByTestId('email-input-help-text')).toContainText(
-      'Please enter your email address',
-    );
+  test.beforeEach(async ({ page }) => {
+    loginPage = new LoginPage(page);
+    await loginPage.goto();
   });
 
-  test('shows a validation message when email format is invalid', async ({ page }) => {
-    await page.goto('/login');
+  test('shows a validation message when email is empty', async () => {
+    await loginPage.continueButton.click();
 
-    await page.getByTestId('email-input-input').fill('not-an-email');
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
-
-    await expect(page.getByTestId('email-input-help-text')).toContainText('Enter a valid email.');
+    await expect(loginPage.emailHelpText).toContainText('Please enter your email address');
   });
 
-  test('shows a validation message when password is empty', async ({ page }) => {
-    await page.goto('/login');
+  test('shows a validation message when email format is invalid', async () => {
+    await loginPage.submitEmail('not-an-email');
 
-    await page.getByTestId('email-input-input').fill(env.hudlEmail);
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
-
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
-
-    await expect(page.getByTestId('password-input-help-text')).toContainText(
-      'Please enter your password',
-    );
+    await expect(loginPage.emailHelpText).toContainText('Enter a valid email.');
   });
 
-  test('shows an error when password is incorrect', async ({ page }) => {
-    await page.goto('/login');
+  test('shows a validation message when password is empty', async () => {
+    await loginPage.submitEmail(env.hudlEmail);
 
-    await page.getByTestId('email-input-input').fill(env.hudlEmail);
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await loginPage.continueButton.click();
 
-    await page.getByTestId('password-input-input').fill('incorrect-password');
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await expect(loginPage.passwordHelpText).toContainText('Please enter your password');
+  });
 
-    await expect(page.getByTestId('password-input-help-text')).toContainText(
+  test('shows an error when password is incorrect', async () => {
+    await loginPage.submitEmail(env.hudlEmail);
+
+    await loginPage.submitPassword('incorrect-password');
+
+    await expect(loginPage.passwordHelpText).toContainText(
       'Your email or password is incorrect. Try again.',
     );
   });
 
   test('opens the reset password flow from the password step', async ({ page }) => {
-    await page.goto('/login');
+    await loginPage.submitEmail(env.hudlEmail);
 
-    await page.getByTestId('email-input-input').fill(env.hudlEmail);
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
-
-    await page.getByTestId('forgot-password').click();
+    await loginPage.openResetPasswordFlow();
 
     await expect(page.getByRole('heading', { name: 'Reset Password' })).toBeVisible();
-    await expect(page.getByText("We'll send you a link to")).toBeVisible();
+    await expect(page.getByText("We'll send you a link to reset your password.")).toBeVisible();
     await expect(page.getByRole('textbox', { name: 'Email' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Continue' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
   });
 
   test('logs in with valid credentials', async ({ page }) => {
-    await page.goto('/login');
+    await loginPage.submitEmail(env.hudlEmail);
 
-    await page.getByTestId('email-input-input').fill(env.hudlEmail);
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
-
-    await page.getByTestId('password-input-input').fill(env.hudlPassword);
-    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await loginPage.submitPassword(env.hudlPassword);
 
     await expect(page).toHaveURL(/\/home/);
     await expect(page.getByTestId('webnav-globalnav-home').first()).toBeVisible();

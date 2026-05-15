@@ -5,20 +5,18 @@ export class LoginPage {
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
   readonly continueButton: Locator;
-  readonly forgetPasswordLink: Locator;
+  readonly forgotPasswordLink: Locator;
   readonly emailHelpText: Locator;
   readonly passwordHelpText: Locator;
-  readonly homeNavigationLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.emailInput = page.getByTestId('email-input-input');
     this.passwordInput = page.getByTestId('password-input-input');
     this.continueButton = page.getByRole('button', { name: 'Continue', exact: true });
-    this.forgetPasswordLink = page.getByTestId('forgot-password');
+    this.forgotPasswordLink = page.getByTestId('forgot-password');
     this.emailHelpText = page.getByTestId('email-input-help-text');
     this.passwordHelpText = page.getByTestId('password-input-help-text');
-    this.homeNavigationLink = page.getByTestId('webnav-globalnav-home');
   }
 
   async goto(): Promise<void> {
@@ -36,6 +34,6 @@ export class LoginPage {
   }
 
   async openResetPasswordFlow(): Promise<void> {
-    await this.forgetPasswordLink.click();
+    await this.forgotPasswordLink.click();
   }
 }
