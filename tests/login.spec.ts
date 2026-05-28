@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
-import { env } from '../utils/env';
+import { env, hasHudlCredentials } from '../utils/env';
 
 test.describe('Hudl login', () => {
   let loginPage: LoginPage;
@@ -23,7 +23,7 @@ test.describe('Hudl login', () => {
   });
 
   test('shows a validation message when password is empty', async () => {
-    await loginPage.submitEmail(env.hudlEmail);
+    await loginPage.submitEmail('test@example.com');
 
     await loginPage.continueButton.click();
 
@@ -31,23 +31,21 @@ test.describe('Hudl login', () => {
   });
 
   test('shows an error when password is incorrect', async () => {
-    await loginPage.submitEmail(env.hudlEmail);
+    await loginPage.submitEmail('test@example.com');
 
     await loginPage.submitPassword('incorrect-password');
 
-    await expect(loginPage.passwordHelpText).toContainText(
-      'Your email or password is incorrect. Try again.',
-    );
+    await expect(loginPage.passwordHelpText).toContainText('Incorrect username or password.');
   });
 
   test('masks the password input', async () => {
-    await loginPage.submitEmail(env.hudlEmail);
+    await loginPage.submitEmail('test@example.com');
 
     await expect(loginPage.passwordInput).toHaveAttribute('type', 'password');
   });
 
   test('opens the reset password flow from the password step', async ({ page }) => {
-    await loginPage.submitEmail(env.hudlEmail);
+    await loginPage.submitEmail('test@example.com');
 
     await loginPage.openResetPasswordFlow();
 
@@ -59,9 +57,16 @@ test.describe('Hudl login', () => {
   });
 
   test('logs in with valid credentials', async ({ page }) => {
-    await loginPage.submitEmail(env.hudlEmail);
+    const email = env.hudlEmail;
+    const password = env.hudlPassword;
 
-    await loginPage.submitPassword(env.hudlPassword);
+    if (!hasHudlCredentials() || !email || !password) {
+      test.skip(true, 'Valid Hudl credentials are required for the successful login test');
+      return;
+    }
+
+    await loginPage.submitEmail(email);
+    await loginPage.submitPassword(password);
 
     await expect(page).toHaveURL(/\/home/);
     await expect(page.getByTestId('webnav-globalnav-home').first()).toBeVisible();

@@ -2,8 +2,8 @@ import 'dotenv/config';
 
 type EnvironmentConfig = {
   baseUrl: string;
-  hudlEmail: string;
-  hudlPassword: string;
+  hudlEmail?: string;
+  hudlPassword?: string;
 };
 
 const getRequiredEnv = (name: string): string => {
@@ -18,6 +18,8 @@ const getRequiredEnv = (name: string): string => {
 
 export const env: EnvironmentConfig = {
   baseUrl: getRequiredEnv('BASE_URL'),
-  hudlEmail: getRequiredEnv('HUDL_EMAIL'),
-  hudlPassword: getRequiredEnv('HUDL_PASSWORD'),
+  hudlEmail: process.env.HUDL_EMAIL,
+  hudlPassword: process.env.HUDL_PASSWORD,
 };
+
+export const hasHudlCredentials = (): boolean => Boolean(env.hudlEmail && env.hudlPassword);
